@@ -34,4 +34,12 @@ export class InMemoryQuestionsRepository implements QuestionsRespository {
   async create(question: Question): Promise<void> {
     this.questions.push(question)
   }
+
+  async save(question: Question): Promise<void> {
+    const questionIndex = this.questions.findIndex(
+      (quest) => quest.id === question.id,
+    )
+
+    this.questions[questionIndex] = question
+  }
 }
