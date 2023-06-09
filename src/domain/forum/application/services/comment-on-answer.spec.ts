@@ -20,12 +20,14 @@ describe('Comment On Answer Service', () => {
 
     await answersRepository.create(newAnswer)
 
-    const { comment } = await sut.commentAnswerService({
+    const result = await sut.commentAnswerService({
       answerId: newAnswer.id.toString(),
       authorId: 'author-1',
       content: 'new comment',
     })
-
-    expect(comment.createdAt).toEqual(expect.any(Date))
+    expect(result.isRight()).toBeTruthy()
+    if (result.isRight()) {
+      expect(result.value.comment.content).toEqual('new comment')
+    }
   })
 })

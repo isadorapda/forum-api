@@ -22,11 +22,14 @@ describe('Comment on Question Service', () => {
     const newQuestion = createQuestion({}, new UniqueEntityID('question-1'))
     await questionsRepository.create(newQuestion)
 
-    const { comment } = await sut.commentQuestionService({
+    const result = await sut.commentQuestionService({
       questionId: newQuestion.id.toString(),
       authorId: 'author-1',
       content: 'new comment',
     })
-    expect(comment.createdAt).toEqual(expect.any(Date))
+    expect(result.isRight()).toBe(true)
+    if (result.isRight()) {
+      expect(result.value.comment.content).toEqual('new comment')
+    }
   })
 })

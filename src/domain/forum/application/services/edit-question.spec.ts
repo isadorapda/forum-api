@@ -2,6 +2,7 @@ import { InMemoryQuestionsRepository } from 'tests/repositories/in-memory-questi
 import { EditQuestionService } from './edit-question'
 import { createQuestion } from 'tests/factories/create-question'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { NotAllowedError } from './errors/not-allowed-error'
 
 let questionsRepository: InMemoryQuestionsRepository
 let sut: EditQuestionService
@@ -20,12 +21,13 @@ describe('Edit Question Service', () => {
       new UniqueEntityID('question-1'),
     )
     await questionsRepository.create(newQuestion)
-    await sut.editQuestionService({
+    const result = await sut.editQuestionService({
       authorId: newQuestion.authorId.toString(),
       content: 'edited content',
       questionId: newQuestion.id.toString(),
       title: 'new title',
     })
+    expect(result.isRight()).toBe(true)
     expect(questionsRepository.questions).toHaveLength(1)
     expect(questionsRepository.questions[0]).toMatchObject({
       title: 'new title',
@@ -42,13 +44,14 @@ describe('Edit Question Service', () => {
     )
     await questionsRepository.create(newQuestion)
 
-    await expect(() =>
-      sut.editQuestionService({
-        authorId: 'author-2',
-        content: 'edit question',
-        questionId: newQuestion.id.toString(),
-        title: 'title',
-      }),
-    ).rejects.toBeInstanceOf(Error)
+    const result = await sut.editQuestionService({
+      authorId: 'author-2',
+      content: 'edit question',
+      questionId: newQuestion.id.toString(),
+      title: 'title',
+    })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 })

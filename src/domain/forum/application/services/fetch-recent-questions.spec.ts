@@ -23,12 +23,12 @@ describe('Fetch Recent Questions Service', () => {
       createQuestion({ createdAt: new Date(2023, 0, 22) }),
     )
 
-    const { questions } = await sut.fetchRecentQuestionsService({
+    const result = await sut.fetchRecentQuestionsService({
       page: 1,
       limit: 10,
     })
-
-    expect(questions).toEqual([
+    expect(result.isRight()).toBe(true)
+    expect(result.value?.questions).toEqual([
       expect.objectContaining({
         createdAt: new Date(2023, 0, 22),
       }),
@@ -48,13 +48,13 @@ describe('Fetch Recent Questions Service', () => {
       )
     }
 
-    const { questions } = await sut.fetchRecentQuestionsService({
+    const result = await sut.fetchRecentQuestionsService({
       limit: 10,
       page: 2,
     })
-
-    expect(questions).toHaveLength(2)
-    expect(questions).toEqual([
+    expect(result.isRight()).toBe(true)
+    expect(result.value?.questions).toHaveLength(2)
+    expect(result.value?.questions).toEqual([
       expect.objectContaining({
         createdAt: new Date(2023, 0, 2),
       }),
