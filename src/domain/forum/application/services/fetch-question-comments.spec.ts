@@ -26,12 +26,12 @@ describe('Fetch Question Comments Service', () => {
       createCommentOnQuestion({ questionId: newQuestion.id }),
     )
 
-    const { comments } = await sut.fetchQuestionCommentsService({
+    const result = await sut.fetchQuestionCommentsService({
       questionId: newQuestion.id.toString(),
       pagination: { limit: 10, page: 1 },
     })
 
-    expect(comments).toHaveLength(3)
+    expect(result.value?.comments).toHaveLength(3)
   })
 
   test('Should be able to fetch paginated list of comments on a question', async () => {
@@ -42,11 +42,11 @@ describe('Fetch Question Comments Service', () => {
         }),
       )
     }
-    const { comments } = await sut.fetchQuestionCommentsService({
+    const result = await sut.fetchQuestionCommentsService({
       questionId: 'question-1',
       pagination: { limit: 10, page: 2 },
     })
 
-    expect(comments).toHaveLength(2)
+    expect(result.value?.comments).toHaveLength(2)
   })
 })

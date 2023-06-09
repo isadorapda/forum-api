@@ -20,13 +20,13 @@ describe("Fetch Questions' Answers Service", () => {
       createAnswer({ questionId: new UniqueEntityID('question-1') }),
     )
 
-    const { answers } = await sut.fetchListAnwersService({
+    const result = await sut.fetchListAnwersService({
       questionId: 'question-1',
       pagination: { page: 1, limit: 10 },
     })
 
-    expect(answers).toHaveLength(2)
-    expect(answers).toEqual([
+    expect(result.value?.answers).toHaveLength(2)
+    expect(result.value?.answers).toEqual([
       expect.objectContaining({
         questionId: new UniqueEntityID('question-1'),
       }),
@@ -46,13 +46,13 @@ describe("Fetch Questions' Answers Service", () => {
       )
     }
 
-    const { answers } = await sut.fetchListAnwersService({
+    const result = await sut.fetchListAnwersService({
       questionId: 'question-1',
       pagination: { page: 2, limit: 10 },
     })
 
-    expect(answers).toHaveLength(2)
-    expect(answers).toEqual([
+    expect(result.value?.answers).toHaveLength(2)
+    expect(result.value?.answers).toEqual([
       expect.objectContaining({
         id: new UniqueEntityID(`answer-11`),
       }),

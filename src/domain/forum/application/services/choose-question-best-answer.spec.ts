@@ -4,6 +4,7 @@ import { ChooseQuestionBestAnswerService } from './choose-question-best-answer'
 import { createQuestion } from 'tests/factories/create-question'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { createAnswer } from 'tests/factories/create-answer'
+import { NotAllowedError } from './errors/not-allowed-error'
 
 let answersRepository: InMemoryAnswersRopository
 let questionsRepository: InMemoryQuestionsRepository
@@ -31,11 +32,11 @@ describe("Choose Question's best answer", () => {
     )
     await answersRepository.create(newAnswer)
 
-    await sut.chooseBestAnswerService({
+    const result = await sut.chooseBestAnswerService({
       authorId: newQuestion.authorId.toString(),
       answerId: newAnswer.id.toString(),
     })
-
+    expect(result.isRight()).toBeTruthy()
     expect(questionsRepository.questions[0].bestAnswerId?.toValue()).toEqual(
       'answer-test',
     )
@@ -53,11 +54,12 @@ describe("Choose Question's best answer", () => {
     )
     await answersRepository.create(newAnswer)
 
-    await expect(() =>
-      sut.chooseBestAnswerService({
-        authorId: 'author-1',
-        answerId: 'answer-test',
-      }),
-    ).rejects.toBeInstanceOf(Error)
+    const result = await sut.chooseBestAnswerService({
+      authorId: 'author-1',
+      answerId: 'answer-test',
+    })
+
+    expect(result.isRight()).toBe(false)
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 })

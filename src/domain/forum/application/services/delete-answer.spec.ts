@@ -19,11 +19,11 @@ describe('Delete Answer Service', () => {
     )
     await answersRepository.create(newAnswer)
 
-    await sut.deleteAnswerService({
+    const result = await sut.deleteAnswerService({
       authorId: 'author-1',
       answerId: 'answer-1',
     })
-
+    expect(result.isRight()).toBeTruthy()
     expect(answersRepository.answers).toHaveLength(0)
   })
 
@@ -34,11 +34,10 @@ describe('Delete Answer Service', () => {
     )
     await answersRepository.create(newAnswer)
 
-    await expect(() =>
-      sut.deleteAnswerService({
-        authorId: 'author-1',
-        answerId: 'answer-2',
-      }),
-    ).rejects.toBeInstanceOf(Error)
+    const result = await sut.deleteAnswerService({
+      authorId: 'author-1',
+      answerId: 'answer-2',
+    })
+    expect(result.isLeft()).toBe(true)
   })
 })

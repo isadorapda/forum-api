@@ -10,13 +10,13 @@ describe('Answer question Service', () => {
     sut = new AnswerQuestionService(answersRepository)
   })
   test('Should be able to answer a question', async () => {
-    const { answer } = await sut.answerService({
+    const result = await sut.answerService({
       mentorId: 'mentor-01',
       questionId: 'question-01',
       content: 'New answer',
     })
 
-    expect(answer.content).toEqual('New answer')
-    expect(answersRepository.answers[0].id).toEqual(answer.id)
+    expect(result.isRight()).toBeTruthy()
+    expect(answersRepository.answers[0]).toEqual(result.value?.answer)
   })
 })

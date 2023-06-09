@@ -2,6 +2,7 @@ import { InMemoryAnswerCommentsRepository } from 'tests/repositories/in-memory-a
 import { DeleteCommentOnAnswerService } from './delete-comment-on-answer'
 import { createCommentOnAnswer } from 'tests/factories/create-comment-on-answer'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { NotAllowedError } from './errors/not-allowed-error'
 
 let answerCommentsRepository: InMemoryAnswerCommentsRepository
 let sut: DeleteCommentOnAnswerService
@@ -19,11 +20,11 @@ describe('Delete Comment on Answer', () => {
 
     await answerCommentsRepository.create(newComment)
 
-    await sut.deleteCommentOnAnswerService({
+    const result = await sut.deleteCommentOnAnswerService({
       authorId: 'author-1',
       commentId: newComment.id.toString(),
     })
-
+    expect(result.isRight).toBeTruthy()
     expect(answerCommentsRepository.answerComments).toHaveLength(0)
   })
 
@@ -34,11 +35,12 @@ describe('Delete Comment on Answer', () => {
 
     await answerCommentsRepository.create(newComment)
 
-    await expect(() =>
-      sut.deleteCommentOnAnswerService({
-        authorId: 'author-2',
-        commentId: newComment.id.toString(),
-      }),
-    ).rejects.toBeInstanceOf(Error)
+    const result = await sut.deleteCommentOnAnswerService({
+      authorId: 'author-2',
+      commentId: newComment.id.toString(),
+    })
+
+    expect(result.isLeft).toBeTruthy()
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 })

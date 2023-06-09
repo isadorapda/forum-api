@@ -2,6 +2,7 @@ import { InMemoryQuestionsRepository } from 'tests/repositories/in-memory-questi
 import { DeleteQuestionService } from './delete-question'
 import { createQuestion } from 'tests/factories/create-question'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { NotAllowedError } from './errors/not-allowed-error'
 
 let questionsRepository: InMemoryQuestionsRepository
 let sut: DeleteQuestionService
@@ -19,11 +20,11 @@ describe('Delete Question Service', () => {
       new UniqueEntityID('question-1'),
     )
     await questionsRepository.create(newQuestion)
-    await sut.deleteQuestionService({
+    const result = await sut.deleteQuestionService({
       questionId: 'question-1',
       authorId: 'author-1',
     })
-
+    expect(result.isRight()).toBeTruthy()
     expect(questionsRepository.questions).toHaveLength(0)
   })
 
@@ -35,11 +36,11 @@ describe('Delete Question Service', () => {
       new UniqueEntityID('question-2'),
     )
     await questionsRepository.create(newQuestion)
-    await expect(() =>
-      sut.deleteQuestionService({
-        questionId: 'question-2',
-        authorId: 'author-1',
-      }),
-    ).rejects.toBeInstanceOf(Error)
+    const result = await sut.deleteQuestionService({
+      questionId: 'question-2',
+      authorId: 'author-1',
+    })
+    expect(result.isLeft()).toBeTruthy()
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 })
