@@ -1,10 +1,14 @@
 import { PaginationProps } from '@/core/repositories/pagination-props'
 import { Question } from '../../enterprise/entities/questions'
 import { QuestionsRespository } from '../repositories/questions-repository'
+import { Either, right } from '@/core/either'
 
-interface FetchRecentQuestionsResponse {
-  questions: Question[]
-}
+type FetchRecentQuestionsResponse = Either<
+  null,
+  {
+    questions: Question[]
+  }
+>
 
 export class FetchRecentQuestions {
   constructor(private questionsRepository: QuestionsRespository) {}
@@ -13,6 +17,6 @@ export class FetchRecentQuestions {
     pagination: PaginationProps,
   ): Promise<FetchRecentQuestionsResponse> {
     const questions = await this.questionsRepository.findManyRecent(pagination)
-    return { questions }
+    return right({ questions })
   }
 }

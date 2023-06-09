@@ -1,14 +1,18 @@
 import { PaginationProps } from '@/core/repositories/pagination-props'
 import { QuestionComment } from '../../enterprise/entities/question-comment'
 import { QuestionCommentRepository } from '../repositories/question-comment-repository'
+import { Either, right } from '@/core/either'
 
 interface FetchQuestionCommentsRequest {
   questionId: string
   pagination: PaginationProps
 }
-interface FetchQuestionCommentsResponse {
-  comments: QuestionComment[]
-}
+type FetchQuestionCommentsResponse = Either<
+  null,
+  {
+    comments: QuestionComment[]
+  }
+>
 
 export class FetchQuestionCommentsService {
   constructor(private questionCommentsRepository: QuestionCommentRepository) {}
@@ -21,6 +25,6 @@ export class FetchQuestionCommentsService {
       questionId,
       pagination,
     )
-    return { comments }
+    return right({ comments })
   }
 }

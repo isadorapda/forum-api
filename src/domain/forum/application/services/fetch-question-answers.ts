@@ -1,14 +1,18 @@
 import { PaginationProps } from '@/core/repositories/pagination-props'
 import { Answer } from '../../enterprise/entities/answer'
 import { AnswersRepository } from '../repositories/answers-repository'
+import { Either, right } from '@/core/either'
 
 interface FetchListQuestionAnswersRequest {
   questionId: string
   pagination: PaginationProps
 }
-interface FetchListQuestionAnswersResponse {
-  answers: Answer[]
-}
+type FetchListQuestionAnswersResponse = Either<
+  null,
+  {
+    answers: Answer[]
+  }
+>
 
 export class FetchListQuestionAnswersService {
   constructor(private answersRepository: AnswersRepository) {}
@@ -22,6 +26,6 @@ export class FetchListQuestionAnswersService {
       pagination,
     )
 
-    return { answers }
+    return right({ answers })
   }
 }
