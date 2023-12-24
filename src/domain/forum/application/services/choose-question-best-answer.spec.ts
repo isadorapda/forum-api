@@ -5,15 +5,25 @@ import { createQuestion } from 'tests/factories/create-question'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { createAnswer } from 'tests/factories/create-answer'
 import { NotAllowedError } from './errors/not-allowed-error'
+import { InMemoryQuestionAttachmentRespository } from 'tests/repositories/in-memory-question-attachment'
+import { InMemoryAnswerAttachmentRepository } from 'tests/repositories/in-memory-answer-attachment'
 
 let answersRepository: InMemoryAnswersRopository
 let questionsRepository: InMemoryQuestionsRepository
+let questionAttachmentsRepository: InMemoryQuestionAttachmentRespository
+let answerAttachmentRepository: InMemoryAnswerAttachmentRepository
 let sut: ChooseQuestionBestAnswerService
 
 describe("Choose Question's best answer", () => {
   beforeEach(() => {
-    answersRepository = new InMemoryAnswersRopository()
-    questionsRepository = new InMemoryQuestionsRepository()
+    questionAttachmentsRepository = new InMemoryQuestionAttachmentRespository()
+    answerAttachmentRepository = new InMemoryAnswerAttachmentRepository()
+    answersRepository = new InMemoryAnswersRopository(
+      answerAttachmentRepository,
+    )
+    questionsRepository = new InMemoryQuestionsRepository(
+      questionAttachmentsRepository,
+    )
     sut = new ChooseQuestionBestAnswerService(
       questionsRepository,
       answersRepository,

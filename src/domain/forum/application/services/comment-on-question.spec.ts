@@ -3,14 +3,20 @@ import { InMemoryQuestionsRepository } from 'tests/repositories/in-memory-questi
 import { CommentQuestionService } from './comment-on-question'
 import { createQuestion } from 'tests/factories/create-question'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { InMemoryQuestionAttachmentRespository } from 'tests/repositories/in-memory-question-attachment'
 
 let questionsRepository: InMemoryQuestionsRepository
+let questionAttachmentsRepository: InMemoryQuestionAttachmentRespository
+
 let questionCommentsRepository: InMemoryQuestionCommentsRepository
 let sut: CommentQuestionService
 
 describe('Comment on Question Service', () => {
   beforeEach(() => {
-    questionsRepository = new InMemoryQuestionsRepository()
+    questionAttachmentsRepository = new InMemoryQuestionAttachmentRespository()
+    questionsRepository = new InMemoryQuestionsRepository(
+      questionAttachmentsRepository,
+    )
     questionCommentsRepository = new InMemoryQuestionCommentsRepository()
     sut = new CommentQuestionService(
       questionsRepository,

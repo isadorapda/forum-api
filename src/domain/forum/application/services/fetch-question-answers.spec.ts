@@ -2,13 +2,18 @@ import { InMemoryAnswersRopository } from 'tests/repositories/in-memory-answers-
 import { FetchListQuestionAnswersService } from './fetch-question-answers'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { createAnswer } from 'tests/factories/create-answer'
+import { InMemoryAnswerAttachmentRepository } from 'tests/repositories/in-memory-answer-attachment'
 
 let answersRepository: InMemoryAnswersRopository
+let answerAttachmentRepository: InMemoryAnswerAttachmentRepository
 let sut: FetchListQuestionAnswersService
 
 describe("Fetch Questions' Answers Service", () => {
   beforeEach(() => {
-    answersRepository = new InMemoryAnswersRopository()
+    answerAttachmentRepository = new InMemoryAnswerAttachmentRepository()
+    answersRepository = new InMemoryAnswersRopository(
+      answerAttachmentRepository,
+    )
     sut = new FetchListQuestionAnswersService(answersRepository)
   })
 
